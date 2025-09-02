@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Enable strict mode
+set -euo pipefail
+# IFS=$'\n\t'
+
+# Source utilities
+source "$SNAP/utils/config.sh"
+source "$SNAP/utils/utils.sh"
+
+# Main execution
+log "Initializing default snap configuration."
+
+# Set snap defaults
+snapctl set "service-args=$__DEFAULT_SERVICE_ARGS"
+log "Setting default service-args: $__DEFAULT_SERVICE_ARGS"
+
+snapctl set "endure=$__DEFAULT_ENDURE"
+log "Setting default endure: $__DEFAULT_ENDURE"
