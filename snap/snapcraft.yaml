@@ -65,8 +65,15 @@ parts:
       rustup component add rust-src
       rustup target add wasm32-unknown-unknown
       rustup target add wasm32-unknown-unknown --toolchain nightly
+      rustup target add wasm32v1-none --toolchain stable
+      rustup target add wasm32v1-none --toolchain stable-x86_64-unknown-linux-gnu
       craftctl default
       craftctl set version="polkadot-stable2506-1-$(git rev-parse --short HEAD)"
+    override-build: |
+      cargo build --release
+      install -D target/release/polkadot-parachain $SNAPCRAFT_PART_INSTALL/bin/polkadot-parachain
+      install -D target/release/polkadot-execute-worker $SNAPCRAFT_PART_INSTALL/bin/polkadot-execute-worker
+      install -D target/release/polkadot-prepare-worker $SNAPCRAFT_PART_INSTALL/bin/polkadot-prepare-worker
     prime:
       - bin/polkadot-parachain
       - bin/polkadot-execute-worker
