@@ -1,4 +1,4 @@
-# Polkadot - snap
+# Polkadot Parachain - snap
 
 Basically the polkadot-parachain service built as a snap.
 
@@ -12,7 +12,7 @@ cd snap-polkadot-parachain
 snapcraft pack --use-lxd --debug --verbosity=debug # Takes some time.
 ```
 
-## Upgrading Polkadot version
+## Upgrading Polkadot parachain version
 
 Simply change the version number here: https://github.com/dwellir-public/snap-polkadot-parachain/blob/main/snap/snapcraft.yaml#L58 and then of course rebuild.
 
@@ -62,8 +62,8 @@ sudo snap set polkadot-parachain service-args="--base-path=/var/snap/polkadot-pa
 
 ```sudo snap set polkadot-parachain endure=true|false```
 
-If true the Polkadot service will not be restarted after a snap refresh.
-Note that the Polkadot service will still be restarted as the result of changing service-args, etc.
+If true the Polkadot parachain service will not be restarted after a snap refresh.
+Note that the Polkadot parachain service will still be restarted as the result of changing service-args, etc.
 
 Use this when restarts should be avoided e.g. when running a validator.
 
