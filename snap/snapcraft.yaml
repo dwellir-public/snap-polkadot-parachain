@@ -5,8 +5,8 @@ adopt-info: polkadot-parachain
 summary: Polkadot - A multi-chain framework for better blockchain interoperability
 license: GPL-3.0-with-GCC-exception
 contact: info@dwellir.com
-issues: https://github.com/dwellir-public/snap-polkadot/issues
-source-code: https://github.com/dwellir-public/snap-polkadot/
+issues: https://github.com/dwellir-public/snap-polkadot-parachain/issues
+source-code: https://github.com/dwellir-public/snap-polkadot-parachain/
 website: https://www.dwellir.com
 grade: stable
 confinement: strict
@@ -23,23 +23,23 @@ description: |
 
   Start the service with 'sudo snap start polkadot-parachain'
 
-  Check logs from the Polkadot service with 'snap logs polkadot-parachain -f'
+  Check logs from the Polkadot parachain service with 'snap logs polkadot-parachain -f'
 
   Supported configuration options for the snap:
   
   service-args [default=--base-path=$SNAP_COMMON/polkadot_base --name=<hostname>]
   For available arguments see https://github.com/paritytech/polkadot-sdk
-  The value set here will be passed to the Polkadot binary with a few exceptions listed below. 
+  The value set here will be passed to the Polkadot parachain binary with a few exceptions listed below. 
   * --name defaults to the systems hostname the first time the snap is installed.
   * --base-path is always set by the snap to `$SNAP_COMMON/polkadot_base` and is not allowed to be configured.
 
   endure [default=false]
-  If true the Polkadot service will not be restarted after a snap refresh.
-  Note that the Polkadot service will still be restarted as the result of changing service-args, etc.
+  If true the Polkadot parachain service will not be restarted after a snap refresh.
+  Note that the Polkadot parachain service will still be restarted as the result of changing service-args, etc.
 
   Use this when restarts should be avoided e.g. when running a validator.
 
-  Example config for running on Polkadot with an RPC endpoint on port 9933:
+  Example config for running on Polkadot parachain with an RPC endpoint on port 9933:
 
   sudo snap set polkadot-parachain service-args="--name=foobar --chain=polkadot --rpc-port=9933"
 
@@ -76,8 +76,6 @@ parts:
       install -D target/release/polkadot-prepare-worker $SNAPCRAFT_PART_INSTALL/bin/polkadot-prepare-worker
     prime:
       - bin/polkadot-parachain
-      - bin/polkadot-execute-worker
-      - bin/polkadot-prepare-worker
 
   wrappers:
     plugin: dump
