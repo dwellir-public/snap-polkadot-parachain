@@ -72,8 +72,6 @@ parts:
     override-build: |
       cargo build --release
       install -D target/release/polkadot-parachain $SNAPCRAFT_PART_INSTALL/bin/polkadot-parachain
-      install -D target/release/polkadot-execute-worker $SNAPCRAFT_PART_INSTALL/bin/polkadot-execute-worker
-      install -D target/release/polkadot-prepare-worker $SNAPCRAFT_PART_INSTALL/bin/polkadot-prepare-worker
     prime:
       - bin/polkadot-parachain
 
