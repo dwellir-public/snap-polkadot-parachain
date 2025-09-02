@@ -21,7 +21,7 @@ if [ -z "${__CONFIG_LOADED:-}" ]; then
     readonly __SERVICE_BINARY_PATH
 
     # Default service arguments
-    __DEFAULT_SERVICE_ARGS="--data-path=$__DEFAULT_DATA_PATH"
+    __DEFAULT_SERVICE_ARGS="--base-path=$__DEFAULT_DATA_PATH"
     readonly __DEFAULT_SERVICE_ARGS
 
     # Default endure mode setting

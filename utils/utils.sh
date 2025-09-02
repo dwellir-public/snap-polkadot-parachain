@@ -131,13 +131,21 @@ validate_service_args() {
         "${SNAP_COMMON}/polkadot_base"
     )
 
+    remove_quotes() {
+        local str="$1"
+        # Remove leading and trailing quotes (both single and double)
+        str="${str#[\"\']}"
+        str="${str%[\"\']}"
+        echo "$str"
+    }
+
     is_allowed_path() {
         local path="$1"
 
         # Check if path is under SNAP_COMMON
         case "$path" in
             "$SNAP_COMMON"/* | "$SNAP_COMMON" | "$SNAP_COMMON"/ )
-                log "data-path $path is allowed (under SNAP_COMMON)."
+                log "base-path $path is allowed (under SNAP_COMMON)."
                 return 0
                 ;;
         esac
@@ -156,8 +164,8 @@ validate_service_args() {
                     ;;
             esac
         done
-        log "base-path $path is NOT allowed. Use any of these: ${SNAP_COMMON} ${allowed_removable_media_paths[*]} (Hint: sudo snap connect polkadot:removable-media)"
-        echo "base-path $path is NOT allowed. Use any of these: ${SNAP_COMMON} ${allowed_removable_media_paths[*]} (Hint: sudo snap connect polkadot:removable-media)"
+        log "base-path $path is NOT allowed. Use any of these: ${SNAP_COMMON} ${allowed_removable_media_paths[*]} (Hint: sudo snap connect polkadot-parachain:removable-media)"
+        echo "base-path $path is NOT allowed. Use any of these: ${SNAP_COMMON} ${allowed_removable_media_paths[*]} (Hint: sudo snap connect polkadot-parachain:removable-media)"
         return 1
     }
 
@@ -167,7 +175,7 @@ validate_service_args() {
     while [ "$#" -gt 0 ]; do
         case "$1" in
             --base-path=*)
-                base_path="${1#--base-path=}"
+                base_path=$(remove_quotes "${1#--base-path=}")
                 ;;
             --base-path)
                 shift
@@ -176,7 +184,7 @@ validate_service_args() {
                     set_service_args "$(get_previous_service_args)"
                     exit 1
                 fi
-                base_path="$1"
+                base_path=$(remove_quotes "$1")
                 ;;
         esac
 
