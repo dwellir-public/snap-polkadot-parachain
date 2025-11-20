@@ -92,3 +92,9 @@ Configure your startup parameters (written to /var/snap/polkadot-parachain/commo
 ### Alternatively - use systemd
 
 `sudo systemctl <stop|start> snap.polkadot-parachain.polkadot-parachain.service`
+
+### Running polkadot-parachain from other snaps
+
+Other snaps can call on this snap to execute polkadot-parachain commands by connecting to the bins slot. This avoids getting "Permission denied" when calling on polkadot-parachain from other snaps.
+
+```sudo snap connect <snap-name>:bins polkadot-parachain:bins```
