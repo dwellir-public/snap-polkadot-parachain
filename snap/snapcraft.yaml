@@ -27,21 +27,21 @@ description: |
 
   Supported configuration options for the snap:
   
-  service-args [default=--base-path=$SNAP_COMMON/polkadot_base --name=<hostname>]
+  service-args [default=--base-path=$SNAP_COMMON/polkadot_base]
   For available arguments see https://github.com/paritytech/polkadot-sdk
   The value set here will be passed to the Polkadot parachain binary with a few exceptions listed below. 
-  * --name defaults to the systems hostname the first time the snap is installed.
-  * --base-path is always set by the snap to `$SNAP_COMMON/polkadot_base` and is not allowed to be configured.
+  * If --base-path is not supplied, the snap prepends `--base-path=$SNAP_COMMON/polkadot_base`.
+  * A custom --base-path is allowed only under `$SNAP_COMMON` or removable-media paths.
 
   endure [default=false]
   If true the Polkadot parachain service will not be restarted after a snap refresh.
-  Note that the Polkadot parachain service will still be restarted as the result of changing service-args, etc.
+  Changes to service-args take effect on the next service start or manual restart.
 
   Use this when restarts should be avoided e.g. when running a validator.
 
-  Example config for running on Polkadot parachain with an RPC endpoint on port 9933:
+  Example config for running on Asset Hub Polkadot with an RPC endpoint on port 9933:
 
-  sudo snap set polkadot-parachain service-args="--name=foobar --chain=polkadot --rpc-port=9933"
+  sudo snap set polkadot-parachain service-args="--name=foobar --chain=polkadot-assethub --rpc-port=9933"
 
 parts:
   polkadot-parachain:
