@@ -1,23 +1,22 @@
 #!/bin/bash
-source test-helpers.bash
-set +x
-set -e
-# Downgrade Test Script
+
+set -euo pipefail
+
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/test-helpers.bash"
+
 echo "Running downgrade tests"
-# Get the current revision
-current_revision=$(snap info --verbose polkadot | grep installed | awk -F ' ' '{print $3}' | tr -d '()')
-previous_revision=$((current_revision - 1))
 
-echo $previous_revision
+downgrade_revision="${POLKADOT_DOWNGRADE_REVISION:-}"
+if [[ -z "${downgrade_revision}" ]]; then
+    current_revision="$(get_installed_revision)"
+    downgrade_revision="$(find_previous_available_revision "${current_revision}")"
+fi
 
-# Downgrade the Polkadot snap
-sudo snap refresh polkadot --revision=$previous_revision
+before_refresh_log_count="$(get_snap_log_count)"
+refresh_to_revision "${downgrade_revision}"
+sudo snap restart "${POLKADOT_SNAP_NAME}"
 
-sudo snap restart polkadot 
-
-# Let polkadot settle
 wait_for_polkadot_service
-
-# Check node status using the Python script
-python3 check_node_status.py
-
+wait_for_node_health
+run_node_status_checks
+assert_logs_after_line_contain "${before_refresh_log_count}" "Preparing the system for start snap revision: (${downgrade_revision})"

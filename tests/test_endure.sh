@@ -1,24 +1,43 @@
 #!/bin/bash
-source test-helpers.bash
-set +x
-set -e
-# Endure Test Script
 
+set -euo pipefail
 
-# Upgrade to the latest version
-sudo snap refresh polkadot
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/test-helpers.bash"
 
-current_revision=$(snap info --verbose polkadot | grep installed | awk -F ' ' '{print $3}' | tr -d '()')
-previous_revision=$((current_revision - 1))
+echo "Running endure tests"
 
-# Check node status using the Python script
-python3 check_node_status.py
+downgrade_revision="${POLKADOT_DOWNGRADE_REVISION:-}"
+if [[ -z "${downgrade_revision}" ]]; then
+    current_revision="$(get_installed_revision)"
+    downgrade_revision="$(find_previous_available_revision "${current_revision}")"
+fi
 
-# Enable endure config
-sudo snap set polkadot endure=true
+run_node_status_checks
 
-# Downgrade the Polkadot snap
-sudo snap refresh polkadot --revision=$previous_revision
+before_refresh_pid="$(get_service_pid)"
+before_refresh_log_count="$(get_snap_log_count)"
 
-# Check that the service didn't restart
-# ADD LOGICS HERE
+sudo snap set "${POLKADOT_SNAP_NAME}" endure=true
+refresh_to_revision "${downgrade_revision}"
+
+after_refresh_pid="$(get_service_pid)"
+if [[ "${before_refresh_pid}" != "${after_refresh_pid}" ]]; then
+    echo "${POLKADOT_DISPLAY_NAME} service restarted during refresh even though endure=true." >&2
+    exit 1
+fi
+
+assert_logs_after_line_do_not_contain "${before_refresh_log_count}" "Preparing the system for start snap revision: (${downgrade_revision})"
+assert_rpc_version_differs_from_installed
+
+before_manual_restart_log_count="$(get_snap_log_count)"
+sudo snap restart "${POLKADOT_SNAP_NAME}"
+wait_for_polkadot_service
+
+after_manual_restart_pid="$(get_service_pid)"
+if [[ "${after_refresh_pid}" == "${after_manual_restart_pid}" ]]; then
+    echo "${POLKADOT_DISPLAY_NAME} service PID did not change after a manual restart." >&2
+    exit 1
+fi
+
+assert_rpc_version_matches_installed
+assert_logs_after_line_contain "${before_manual_restart_log_count}" "Preparing the system for start snap revision: (${downgrade_revision})"
